@@ -1,0 +1,27 @@
+wekan:
+  image: wekanteam/wekan:latest
+  links:
+    - wekandb
+    - mailserver
+  environment:
+    - MONGO_URL=mongodb://wekandb/wekan
+    - ROOT_URL=http://192.168.178.45:3000
+    - MAIL_URL=smtp://wekan:wekan@mailserver:25
+    - PORT=3000
+  ports:
+    - 3000:3000
+    - 3001:8080
+
+wekandb:
+   image: mongo:3.2.14
+   volumes:
+     - /Users/wolfgang/Documents/Wekan/data:/data/db
+
+mailserver:
+  image: marvambass/versatile-postfix
+  volumes:
+    - /Users/wolfgang/Documents/Wekan/dkim:/etc/postfix/dkim/
+    - /Users/wolfgang/Documents/Wekan/maildirs:/var/mail
+  command: wekan.com wekan:wekan
+  environment:
+    - ALIASES=postmaster:root;hostmaster:root;webmaster:root
